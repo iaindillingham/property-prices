@@ -4,8 +4,8 @@
   "height": 500,
   "background": "rgb(255,255,255)",
   "title": {
-    "text": "Median Price Paid in 2019",
-    "subtitle": "Terraced Houses"
+    "text": "Median Price Paid",
+    "subtitle": "Terraced Houses, 2019"
   },
   "config": {
     "locale": {
