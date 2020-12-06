@@ -19,11 +19,12 @@
     },
     "title": {
       "font": "Avenir Next Condensed",
-      "fontSize": 13,
+      "fontSize": 28,
       "fontWeight": 500,
       "subtitleFont": "Avenir Next Condensed",
-      "subtitleFontSize": 12,
-      "subtitleFontWeight": 400
+      "subtitleFontSize": 20,
+      "subtitleFontWeight": 400,
+      "anchor": "start"
     },
     "legend": {
       "titleFont": "Avenir Next Condensed",
@@ -199,7 +200,6 @@
           "Contains HM Land Registry data © Crown copyright and database right 2020"
         ],
         "orient": "bottom",
-        "anchor": "start",
         "fontSize": 9,
         "fontWeight": 300
       },
