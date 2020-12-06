@@ -104,17 +104,3 @@ copy_data:
     md5: d7d699ca2cc16e2a12e84bd9df18209b.dir
     size: 251682
     nfiles: 2
-make_svg_map:
-  cmd: vg2svg -b models/ specs/map.vg.json reports/figures/map.svg
-  deps:
-  - path: models/data
-    md5: d7d699ca2cc16e2a12e84bd9df18209b.dir
-    size: 251682
-    nfiles: 2
-  - path: specs/map.vg.json
-    md5: d95e77a202293b672aee5647ebbf0271
-    size: 4486
-  outs:
-  - path: reports/figures/map.svg
-    md5: d1cabcafd472319eaa0dc99f1fb8fce0
-    size: 299593

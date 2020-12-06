@@ -62,10 +62,3 @@ stages:
     - data/processed/bdline_gb/district_borough_unitary.json
     outs:
     - models/data
-  make_svg_map:
-    cmd: vg2svg -b models/ specs/map.vg.json reports/figures/map.svg
-    deps:
-    - models/data
-    - specs/map.vg.json
-    outs:
-    - reports/figures/map.svg
