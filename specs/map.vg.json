@@ -3,6 +3,7 @@
   "width": 400,
   "height": 500,
   "background": "rgb(255,255,255)",
+  "padding": 10,
   "title": {
     "text": "Median Price Paid",
     "subtitle": "Terraced Houses, 2019"
