@@ -1,0 +1,120 @@
+make_raw_price_paid_data:
+  cmd: python3 src/data/make_raw_price_paid_data.py
+  deps:
+  - path: data/external/price_paid_data/pp-2019.csv
+    md5: 0bd9f924ed64141ccc65443237c9b035
+  - path: src/data/make_raw_price_paid_data.py
+    md5: 3be40fe55d4efe0037ddb4b07194237f
+  outs:
+  - path: data/raw/price_paid_data/pp-2019.csv
+    md5: 9aa8c01a23524b3912031d6ce1b6dc48
+make_raw_codepo_gb:
+  cmd: python3 src/data/make_raw_codepo_gb.py
+  deps:
+  - path: data/external/codepo_gb
+    md5: a038766eb71e6af1e1ba3efb7a77f25f.dir
+  - path: src/data/make_raw_codepo_gb.py
+    md5: 34af79cd362030be3b77dd2260e8cc69
+  outs:
+  - path: data/raw/codepo_gb/codepo_gb.csv
+    md5: b09154161cf9d42320c396130efc071f
+make_processed_codepo_gb:
+  cmd: python3 src/data/make_processed_codepo_gb.py
+  deps:
+  - path: data/raw/codepo_gb/codepo_gb.csv
+    md5: b09154161cf9d42320c396130efc071f
+  - path: src/data/make_processed_codepo_gb.py
+    md5: fb5420c53c96b963b6e1f1200f9f690a
+  outs:
+  - path: data/processed/codepo_gb/codepo_gb.feather
+    md5: 2ba6c907fb0493e66200524f3dd2202e
+make_processed_price_paid_data:
+  cmd: python3 src/data/make_processed_price_paid_data.py
+  deps:
+  - path: data/processed/codepo_gb/codepo_gb.feather
+    md5: 2ba6c907fb0493e66200524f3dd2202e
+  - path: data/raw/price_paid_data/pp-2019.csv
+    md5: 9aa8c01a23524b3912031d6ce1b6dc48
+  - path: src/data/make_processed_price_paid_data.py
+    md5: 4e65e6df454d217a276760aeea821ead
+  outs:
+  - path: data/processed/price_paid_data/pp-2019.feather
+    md5: 2db81b75f3328f0f6de28bc2a290db49
+make_raw_bdline_gb:
+  cmd: python3 src/data/make_raw_bdline_gb.py
+  deps:
+  - path: data/external/bdline_gpkg_gb
+    md5: dd2af96d1dab6cd236783e9bb3d89d53.dir
+    size: 1285685854
+    nfiles: 6
+  - path: src/data/make_raw_bdline_gb.py
+    md5: 300964a6e3cd688bdaa0e77b77092091
+    size: 1151
+  outs:
+  - path: data/raw/bdline_gb
+    md5: dbc32b65f5f3c6caf86aa952fa9de16f.dir
+    size: 69680385
+    nfiles: 1
+make_interim_bdline_gb:
+  cmd: geo2topo data/raw/bdline_gb/district_borough_unitary.json > data/interim/bdline_gb/district_borough_unitary.json
+  deps:
+  - path: data/raw/bdline_gb
+    md5: dbc32b65f5f3c6caf86aa952fa9de16f.dir
+    size: 69680385
+    nfiles: 1
+  outs:
+  - path: data/interim/bdline_gb/district_borough_unitary.json
+    md5: 0560b65793a3b252455c6ede62e46bd3
+    size: 33148961
+make_processed_bdline_gb:
+  cmd: toposimplify --planar-area 5000000 data/interim/bdline_gb/district_borough_unitary.json
+    > data/processed/bdline_gb/district_borough_unitary.json
+  deps:
+  - path: data/interim/bdline_gb/district_borough_unitary.json
+    md5: 0560b65793a3b252455c6ede62e46bd3
+    size: 33148961
+  outs:
+  - path: data/processed/bdline_gb/district_borough_unitary.json
+    md5: a69a652fe88075c73aaba3a6a1d972d2
+    size: 213834
+make_aggregated_price_paid_data:
+  cmd: python3 src/data/make_aggregated_price_paid_data.py
+  deps:
+  - path: data/processed/price_paid_data/pp-2019.feather
+    md5: 2db81b75f3328f0f6de28bc2a290db49
+    size: 125678738
+  - path: src/data/make_aggregated_price_paid_data.py
+    md5: 39d2aa8548360689dc9b5c1379da6332
+    size: 1082
+  outs:
+  - path: data/processed/aggregated_price_paid_data/aggregated-pp-2019.csv
+    md5: b0ad6889825aca02eb17222668e1fdd1
+    size: 37848
+copy_data:
+  cmd: ./bin/copy_data.sh
+  deps:
+  - path: data/processed/aggregated_price_paid_data/aggregated-pp-2019.csv
+    md5: b0ad6889825aca02eb17222668e1fdd1
+    size: 37848
+  - path: data/processed/bdline_gb/district_borough_unitary.json
+    md5: a69a652fe88075c73aaba3a6a1d972d2
+    size: 213834
+  outs:
+  - path: models/data
+    md5: d7d699ca2cc16e2a12e84bd9df18209b.dir
+    size: 251682
+    nfiles: 2
+make_svg_map:
+  cmd: vg2svg -b models/ specs/map.vg.json reports/figures/map.svg
+  deps:
+  - path: models/data
+    md5: d7d699ca2cc16e2a12e84bd9df18209b.dir
+    size: 251682
+    nfiles: 2
+  - path: specs/map.vg.json
+    md5: d95e77a202293b672aee5647ebbf0271
+    size: 4486
+  outs:
+  - path: reports/figures/map.svg
+    md5: d1cabcafd472319eaa0dc99f1fb8fce0
+    size: 299593

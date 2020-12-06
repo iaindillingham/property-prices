@@ -1,0 +1,71 @@
+stages:
+  make_raw_price_paid_data:
+    cmd: python3 src/data/make_raw_price_paid_data.py
+    deps:
+    - data/external/price_paid_data/pp-2019.csv
+    - src/data/make_raw_price_paid_data.py
+    outs:
+    - data/raw/price_paid_data/pp-2019.csv
+  make_raw_codepo_gb:
+    cmd: python3 src/data/make_raw_codepo_gb.py
+    deps:
+    - data/external/codepo_gb
+    - src/data/make_raw_codepo_gb.py
+    outs:
+    - data/raw/codepo_gb/codepo_gb.csv
+  make_processed_codepo_gb:
+    cmd: python3 src/data/make_processed_codepo_gb.py
+    deps:
+    - data/raw/codepo_gb/codepo_gb.csv
+    - src/data/make_processed_codepo_gb.py
+    outs:
+    - data/processed/codepo_gb/codepo_gb.feather
+  make_processed_price_paid_data:
+    cmd: python3 src/data/make_processed_price_paid_data.py
+    deps:
+    - data/processed/codepo_gb/codepo_gb.feather
+    - data/raw/price_paid_data/pp-2019.csv
+    - src/data/make_processed_price_paid_data.py
+    outs:
+    - data/processed/price_paid_data/pp-2019.feather
+  make_raw_bdline_gb:
+    cmd: python3 src/data/make_raw_bdline_gb.py
+    deps:
+    - data/external/bdline_gpkg_gb
+    - src/data/make_raw_bdline_gb.py
+    outs:
+    - data/raw/bdline_gb
+  make_interim_bdline_gb:
+    cmd: geo2topo data/raw/bdline_gb/district_borough_unitary.json > data/interim/bdline_gb/district_borough_unitary.json
+    deps:
+    - data/raw/bdline_gb
+    outs:
+    - data/interim/bdline_gb/district_borough_unitary.json
+  make_processed_bdline_gb:
+    cmd: toposimplify --planar-area 5000000 data/interim/bdline_gb/district_borough_unitary.json
+      > data/processed/bdline_gb/district_borough_unitary.json
+    deps:
+    - data/interim/bdline_gb/district_borough_unitary.json
+    outs:
+    - data/processed/bdline_gb/district_borough_unitary.json
+  make_aggregated_price_paid_data:
+    cmd: python3 src/data/make_aggregated_price_paid_data.py
+    deps:
+    - data/processed/price_paid_data/pp-2019.feather
+    - src/data/make_aggregated_price_paid_data.py
+    outs:
+    - data/processed/aggregated_price_paid_data/aggregated-pp-2019.csv
+  copy_data:
+    cmd: ./bin/copy_data.sh
+    deps:
+    - data/processed/aggregated_price_paid_data/aggregated-pp-2019.csv
+    - data/processed/bdline_gb/district_borough_unitary.json
+    outs:
+    - models/data
+  make_svg_map:
+    cmd: vg2svg -b models/ specs/map.vg.json reports/figures/map.svg
+    deps:
+    - models/data
+    - specs/map.vg.json
+    outs:
+    - reports/figures/map.svg

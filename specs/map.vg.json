@@ -1,0 +1,214 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 400,
+  "height": 500,
+  "background": "rgb(255,255,255)",
+  "title": {
+    "text": "Median Price Paid in 2019",
+    "subtitle": "Terraced Houses"
+  },
+  "config": {
+    "locale": {
+      "number": {
+        "currency": [
+          "£",
+          ""
+        ]
+      }
+    },
+    "title": {
+      "font": "Avenir Next Condensed",
+      "fontSize": 13,
+      "fontWeight": 500,
+      "subtitleFont": "Avenir Next Condensed",
+      "subtitleFontSize": 12,
+      "subtitleFontWeight": 400
+    },
+    "legend": {
+      "titleFont": "Avenir Next Condensed",
+      "titleFontSize": 11,
+      "titleFontWeight": 400,
+      "labelFont": "Avenir Next Condensed",
+      "labelFontSize": 10,
+      "labelFontWeight": 100
+    }
+  },
+  "signals": [
+    {
+      "name": "property_type",
+      "value": "Terraced"
+    }
+  ],
+  "data": [
+    {
+      "name": "prices",
+      "format": {
+        "type": "csv",
+        "parse": {
+          "price": "number"
+        }
+      },
+      "url": "data/aggregated-pp-2019.csv",
+      "transform": [
+        {
+          "type": "pivot",
+          "groupby": [
+            "admin_district_code"
+          ],
+          "field": "property_type",
+          "value": "price"
+        }
+      ]
+    },
+    {
+      "name": "boundaries",
+      "format": {
+        "type": "topojson",
+        "feature": "district_borough_unitary"
+      },
+      "url": "data/district_borough_unitary.json",
+      "transform": [
+        {
+          "type": "lookup",
+          "from": "prices",
+          "key": "admin_district_code",
+          "values": [
+            "Detached",
+            "Flat",
+            "Semi-Detached",
+            "Terraced"
+          ],
+          "fields": [
+            "properties.census_code"
+          ]
+        },
+        {
+          "type": "geojson",
+          "signal": "boundaries"
+        }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "colour",
+      "type": "quantile",
+      "domain": {
+        "data": "prices",
+        "field": {
+          "signal": "property_type"
+        }
+      },
+      "range": {
+        "scheme": "reds",
+        "count": 8
+      }
+    }
+  ],
+  "projections": [
+    {
+      "name": "projection",
+      "type": "identity",
+      "translate": [
+        0,
+        {
+          "signal": "height"
+        }
+      ],
+      "fit": {
+        "signal": "boundaries"
+      },
+      "size": [
+        {
+          "signal": "width"
+        },
+        {
+          "signal": "height"
+        }
+      ],
+      "reflectY": true
+    }
+  ],
+  "legends": [
+    {
+      "title": "Median Price Paid",
+      "format": "$~s",
+      "type": "symbol",
+      "fill": "colour"
+    }
+  ],
+  "marks": [
+    {
+      "type": "shape",
+      "from": {
+        "data": "boundaries"
+      },
+      "encode": {
+        "enter": {
+          "stroke": {
+            "value": "white"
+          },
+          "tooltip": {
+            "signal": "{'Region': datum.properties.name, 'Median Price': if(isValid(datum[property_type]), format(datum[property_type], '$~s'), '')}"
+          }
+        },
+        "update": {
+          "fill": [
+            {
+              "test": "isValid(datum[property_type])",
+              "field": {
+                "signal": "property_type"
+              },
+              "scale": "colour"
+            },
+            {
+              "value": "rgb(192,192,192)"
+            }
+          ],
+          "strokeWidth": {
+            "value": 0.25
+          },
+          "zindex": {
+            "value": 0
+          }
+        },
+        "hover": {
+          "strokeWidth": {
+            "value": 2
+          },
+          "zindex": {
+            "value": 1
+          }
+        }
+      },
+      "transform": [
+        {
+          "type": "geoshape",
+          "projection": "projection"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "title": {
+        "text": [
+          "Contains OS data © Crown copyright and database right 2020",
+          "Contains Royal Mail data © Royal Mail copyright and database right 2020",
+          "Contains National Statistics data © Crown copyright and database right 2020",
+          "Contains HM Land Registry data © Crown copyright and database right 2020"
+        ],
+        "orient": "bottom",
+        "anchor": "start",
+        "fontSize": 9,
+        "fontWeight": 300
+      },
+      "encode": {
+        "enter": {
+          "y": {
+            "signal": "height"
+          }
+        }
+      }
+    }
+  ]
+}
