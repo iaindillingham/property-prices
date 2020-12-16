@@ -45,7 +45,7 @@ First, install [Poetry][], [topojson-server][], [topojson-simplify][], and [vega
 Then, run:
 
 ```sh
-poetry install
+poetry install & poetry run dvc pull
 ```
 
 ## Motivations
