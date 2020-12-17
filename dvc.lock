@@ -108,21 +108,24 @@ render_map:
   cmd: ./bin/render_map.sh
   deps:
   - path: bin/render_map.sh
-    md5: e9c37a80c74439074bb08bf05363b1e1
-    size: 268
+    md5: 180b7f5438f706bee42ce658239b5066
+    size: 322
   - path: models/data/aggregated-pp-2019.csv
     md5: b0ad6889825aca02eb17222668e1fdd1
     size: 37848
   - path: models/data/district_borough_unitary.json
     md5: a69a652fe88075c73aaba3a6a1d972d2
     size: 213834
+  - path: specs/format.json
+    md5: 1638630ed78d167c1a051644c4489e8f
+    size: 41
   - path: specs/map.vg.json
     md5: c5725b9f091b12f7fcbb6bc2f4a448f6
     size: 4499
   outs:
   - path: reports/figures/map.pdf
-    md5: a86834f4bcfb8e1902129f69422f6492
-    size: 64357
+    md5: b3fdbe8f214a6d8268343eac1fcd710a
+    size: 64132
   - path: reports/figures/map.png
-    md5: ecb3c0bce4fd410bfc0b5af44e7efcb3
-    size: 93991
+    md5: a9165c91471c15f203231b29c9a2edec
+    size: 93687

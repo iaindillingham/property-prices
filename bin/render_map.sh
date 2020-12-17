@@ -6,5 +6,5 @@ DST_DIR=reports/figures
 PANGOCAIRO_BACKEND=fontconfig
 
 mkdir -p $DST_DIR
-vg2png -b models/ specs/map.vg.json $DST_DIR/map.png
-vg2pdf -b models/ specs/map.vg.json $DST_DIR/map.pdf
+vg2png -b models/ --format specs/format.json specs/map.vg.json $DST_DIR/map.png
+vg2pdf -b models/ --format specs/format.json specs/map.vg.json $DST_DIR/map.pdf

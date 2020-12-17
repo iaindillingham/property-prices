@@ -68,6 +68,7 @@ stages:
     - bin/render_map.sh
     - models/data/aggregated-pp-2019.csv
     - models/data/district_borough_unitary.json
+    - specs/format.json
     - specs/map.vg.json
     outs:
     - reports/figures/map.pdf
