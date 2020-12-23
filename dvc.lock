@@ -116,15 +116,12 @@ render_map:
   - path: models/data/district_borough_unitary.json
     md5: a69a652fe88075c73aaba3a6a1d972d2
     size: 213834
-  - path: specs/format.json
-    md5: 1638630ed78d167c1a051644c4489e8f
-    size: 41
   - path: specs/map.vg.json
     md5: 4383e9bd7f8a88887433c350a220e940
     size: 6490
   outs:
   - path: reports/figures/map.pdf
-    md5: 8f8a972998ed8d5d3e1c990f8fa20adc
+    md5: eef6aefe3bb6a20304f33c16e19cc8d0
     size: 181609
   - path: reports/figures/map.png
     md5: 863c741b746b6e84921028f909a3721d
