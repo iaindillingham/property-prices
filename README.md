@@ -1,5 +1,9 @@
 # Property Prices
 
+A map of property prices.
+
+![Map](reports/figures/map.png)
+
 ## Datasets
 
 This project uses the following datasets:
