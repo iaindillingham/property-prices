@@ -120,12 +120,12 @@ render_map:
     md5: 1638630ed78d167c1a051644c4489e8f
     size: 41
   - path: specs/map.vg.json
-    md5: c5725b9f091b12f7fcbb6bc2f4a448f6
-    size: 4499
+    md5: 2833932984b7989b2e76babe69a889b6
+    size: 6096
   outs:
   - path: reports/figures/map.pdf
-    md5: b3fdbe8f214a6d8268343eac1fcd710a
-    size: 64132
+    md5: 6398f8e38c80e4dd94751f73daf0d3c2
+    size: 179824
   - path: reports/figures/map.png
-    md5: a9165c91471c15f203231b29c9a2edec
-    size: 93687
+    md5: 6be30b63039994ed11172dc130e11404
+    size: 171578

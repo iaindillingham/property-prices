@@ -1,12 +1,9 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "width": 400,
-  "height": 500,
   "background": "rgb(255,255,255)",
   "padding": 10,
   "title": {
-    "text": "Median Price Paid",
-    "subtitle": "Terraced Houses, 2019"
+    "text": "Median Price Paid, 2019"
   },
   "config": {
     "locale": {
@@ -21,9 +18,6 @@
       "font": "Avenir Next Condensed",
       "fontSize": 28,
       "fontWeight": 500,
-      "subtitleFont": "Avenir Next Condensed",
-      "subtitleFontSize": 20,
-      "subtitleFontWeight": 400,
       "anchor": "start"
     },
     "legend": {
@@ -37,11 +31,29 @@
   },
   "signals": [
     {
-      "name": "property_type",
-      "value": "Terraced"
+      "name": "map_width",
+      "value": 400
+    },
+    {
+      "name": "map_height",
+      "value": 500
     }
   ],
   "data": [
+    {
+      "name": "boundaries",
+      "format": {
+        "type": "topojson",
+        "feature": "district_borough_unitary"
+      },
+      "url": "data/district_borough_unitary.json",
+      "transform": [
+        {
+          "type": "geojson",
+          "signal": "boundaries"
+        }
+      ]
+    },
     {
       "name": "prices",
       "format": {
@@ -53,58 +65,29 @@
       "url": "data/aggregated-pp-2019.csv",
       "transform": [
         {
-          "type": "pivot",
-          "groupby": [
+          "type": "lookup",
+          "from": "boundaries",
+          "key": "properties.census_code",
+          "fields": [
             "admin_district_code"
           ],
-          "field": "property_type",
-          "value": "price"
+          "as": [
+            "boundary"
+          ]
         }
       ]
     },
     {
-      "name": "boundaries",
-      "format": {
-        "type": "topojson",
-        "feature": "district_borough_unitary"
-      },
-      "url": "data/district_borough_unitary.json",
+      "name": "column_domain",
+      "source": "prices",
       "transform": [
         {
-          "type": "lookup",
-          "from": "prices",
-          "key": "admin_district_code",
-          "values": [
-            "Detached",
-            "Flat",
-            "Semi-Detached",
-            "Terraced"
-          ],
-          "fields": [
-            "properties.census_code"
+          "type": "aggregate",
+          "groupby": [
+            "property_type"
           ]
-        },
-        {
-          "type": "geojson",
-          "signal": "boundaries"
         }
       ]
-    }
-  ],
-  "scales": [
-    {
-      "name": "colour",
-      "type": "quantile",
-      "domain": {
-        "data": "prices",
-        "field": {
-          "signal": "property_type"
-        }
-      },
-      "range": {
-        "scheme": "reds",
-        "count": 8
-      }
     }
   ],
   "projections": [
@@ -114,7 +97,7 @@
       "translate": [
         0,
         {
-          "signal": "height"
+          "signal": "map_height"
         }
       ],
       "fit": {
@@ -122,71 +105,140 @@
       },
       "size": [
         {
-          "signal": "width"
+          "signal": "map_width"
         },
         {
-          "signal": "height"
+          "signal": "map_height"
         }
       ],
       "reflectY": true
     }
   ],
-  "legends": [
-    {
-      "title": "Median Price Paid",
-      "format": "$~s",
-      "type": "symbol",
-      "fill": "colour"
-    }
-  ],
+  "layout": {
+    "columns": 1
+  },
   "marks": [
     {
-      "type": "shape",
-      "from": {
-        "data": "boundaries"
-      },
-      "encode": {
-        "enter": {
-          "stroke": {
-            "value": "white"
+      "type": "group",
+      "layout": {},
+      "marks": [
+        {
+          "type": "group",
+          "role": "column-header",
+          "from": {
+            "data": "column_domain"
           },
-          "tooltip": {
-            "signal": "{'Region': datum.properties.name, 'Median Price': if(isValid(datum[property_type]), format(datum[property_type], '$~s'), '')}"
+          "sort": {
+            "field": "datum.property_type",
+            "order": "ascending"
+          },
+          "title": {
+            "text": {
+              "signal": "parent.property_type"
+            },
+            "fontSize": 20,
+            "fontWeight": 400
           }
         },
-        "update": {
-          "fill": [
+        {
+          "type": "group",
+          "from": {
+            "facet": {
+              "name": "faceted_prices",
+              "data": "prices",
+              "groupby": "property_type"
+            }
+          },
+          "sort": {
+            "field": "datum.property_type",
+            "order": "ascending"
+          },
+          "scales": [
             {
-              "test": "isValid(datum[property_type])",
-              "field": {
-                "signal": "property_type"
+              "name": "colour",
+              "type": "quantile",
+              "domain": {
+                "data": "faceted_prices",
+                "field": "price"
               },
-              "scale": "colour"
-            },
-            {
-              "value": "rgb(192,192,192)"
+              "range": {
+                "scheme": "reds",
+                "count": 4
+              }
             }
           ],
-          "strokeWidth": {
-            "value": 0.25
+          "legends": [
+            {
+              "title": "Quartiles",
+              "orient": "none",
+              "legendX": 0,
+              "legendY": 15,
+              "format": "$~s",
+              "type": "symbol",
+              "fill": "colour"
+            }
+          ],
+          "encode": {
+            "enter": {
+              "width": {
+                "signal": "map_width"
+              },
+              "height": {
+                "signal": "map_height"
+              }
+            }
           },
-          "zindex": {
-            "value": 0
-          }
-        },
-        "hover": {
-          "strokeWidth": {
-            "value": 2
-          },
-          "zindex": {
-            "value": 1
-          }
-        }
-      },
-      "transform": [
-        {
-          "type": "geoshape",
-          "projection": "projection"
+          "marks": [
+            {
+              "type": "shape",
+              "from": {
+                "data": "faceted_prices"
+              },
+              "encode": {
+                "enter": {
+                  "stroke": {
+                    "value": "white"
+                  },
+                  "tooltip": {
+                    "signal": "{'Property Type': datum.property_type, 'Region': datum.boundary.properties.name, 'Median Price': format(datum.price, '$~s')}"
+                  }
+                },
+                "update": {
+                  "fill": [
+                    {
+                      "test": "isValid(datum.price)",
+                      "field": "price",
+                      "scale": "colour"
+                    },
+                    {
+                      "value": "rgb(192,192,192)"
+                    }
+                  ],
+                  "strokeWidth": {
+                    "value": 0.25
+                  },
+                  "zindex": {
+                    "value": 0
+                  }
+                },
+                "hover": {
+                  "strokeWidth": {
+                    "value": 2
+                  },
+                  "zindex": {
+                    "value": 1
+                  }
+                }
+              },
+              "transform": [
+                {
+                  "type": "geoshape",
+                  "projection": "projection",
+                  "field": "datum.boundary"
+                }
+              ]
+            }
+          ]
         }
       ]
     },
