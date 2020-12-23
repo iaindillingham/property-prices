@@ -2,9 +2,6 @@
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "background": "rgb(255,255,255)",
   "padding": 10,
-  "title": {
-    "text": "Median Price Paid, 2019"
-  },
   "config": {
     "locale": {
       "number": {
@@ -18,6 +15,9 @@
       "font": "Avenir Next Condensed",
       "fontSize": 28,
       "fontWeight": 500,
+      "subtitleFont": "Avenir Next Condensed",
+      "subtitleFontSize": 14,
+      "subtitleFontWeight": 400,
       "anchor": "start"
     },
     "legend": {
@@ -27,6 +27,11 @@
       "labelFont": "Avenir Next Condensed",
       "labelFontSize": 10,
       "labelFontWeight": 100
+    },
+    "text": {
+      "font": "Avenir Next Condensed",
+      "fontSize": 9,
+      "fontWeight": 300
     }
   },
   "signals": [
@@ -115,9 +120,19 @@
     }
   ],
   "layout": {
-    "columns": 1
+    "columns": 1,
+    "padding": {
+      "row": 20
+    }
   },
   "marks": [
+    {
+      "type": "group",
+      "title": {
+        "text": "Property Prices",
+        "subtitle": "Median price paid for properties of each type in each region, 2019"
+      }
+    },
     {
       "type": "group",
       "layout": {},
@@ -171,8 +186,6 @@
             {
               "title": "Quartiles",
               "orient": "none",
-              "legendX": 0,
-              "legendY": 15,
               "format": "$~s",
               "type": "symbol",
               "fill": "colour"
@@ -244,24 +257,23 @@
     },
     {
       "type": "group",
-      "title": {
-        "text": [
-          "Contains OS data © Crown copyright and database right 2020",
-          "Contains Royal Mail data © Royal Mail copyright and database right 2020",
-          "Contains National Statistics data © Crown copyright and database right 2020",
-          "Contains HM Land Registry data © Crown copyright and database right 2020"
-        ],
-        "orient": "bottom",
-        "fontSize": 9,
-        "fontWeight": 300
-      },
-      "encode": {
-        "enter": {
-          "y": {
-            "signal": "height"
+      "marks": [
+        {
+          "type": "text",
+          "encode": {
+            "enter": {
+              "text": {
+                "value": [
+                  "Contains OS data © Crown copyright and database right 2020",
+                  "Contains Royal Mail data © Royal Mail copyright and database right 2020",
+                  "Contains National Statistics data © Crown copyright and database right 2020",
+                  "Contains HM Land Registry data © Crown copyright and database right 2020"
+                ]
+              }
+            }
           }
         }
-      }
+      ]
     }
   ]
 }
